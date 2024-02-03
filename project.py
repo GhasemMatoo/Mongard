@@ -1,6 +1,7 @@
 import logging
 from functools import partial, update_wrapper
 from datetime import timedelta, datetime
+from collections.abc import Hashable
 
 logger = logging.getLogger('schedule')
 
@@ -34,6 +35,27 @@ class Scheduler:
     def _run_job(job):
         job.run()
 
+    def get_jobs(self, tag=None):
+        if tag is None:
+            return self.jobs[:]
+        else:
+            return [job for job in self.jobs if tag in job.tags]
+
+    def get_next_run(self, tag=None):
+        if not self.jobs:
+            return None
+        jobs_filtered = self.get_jobs(tag)
+        if not jobs_filtered:
+            return None
+        return min(jobs_filtered).next_run
+    next_run = property(get_next_run)
+
+    @property
+    def idle_seconds(self):
+        if not self.next_run:
+            return None
+        return (self.next_run - datetime.now()).total_seconds()
+
 
 class Job:
 
@@ -44,6 +66,7 @@ class Job:
         self.period = None
         self.last_run = None
         self.next_run = None
+        self.tags = set()
         self.scheduler = scheduler
         self._unit_tuple = ('seconds', 'minutes', 'hours', 'days', 'weeks')
 
@@ -105,6 +128,12 @@ class Job:
         self.unit = 'weeks'
         return self
 
+    def tag(self, *tags):
+        if not all(isinstance(tag, Hashable)for tag in tags):
+            raise TypeError("Tags must be hashable")
+        self.tags.update(tags)
+        return self
+
     def do(self, job_func, *arg, **kwargs):
         self.job_func = partial(job_func, *arg, **kwargs)
         update_wrapper(self.job_func, job_func)
@@ -144,3 +173,15 @@ def every(interval=1):
 
 def run_pending():
     return default_scheduler.run_pending()
+
+
+def get_jobs(tag=None):
+    return default_scheduler.get_jobs(tag)
+
+
+def get_next_run(tag=None):
+    return default_scheduler.get_next_run(tag)
+
+
+def idle_seconds():
+    return default_scheduler.idle_seconds
