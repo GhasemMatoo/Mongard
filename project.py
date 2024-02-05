@@ -1,6 +1,7 @@
 import logging
 from functools import partial, update_wrapper
 from datetime import timedelta, datetime
+from time import sleep
 from collections.abc import Hashable
 
 logger = logging.getLogger('schedule')
@@ -55,6 +56,27 @@ class Scheduler:
         if not self.next_run:
             return None
         return (self.next_run - datetime.now()).total_seconds()
+
+    def clear(self, tag=None):
+        if not tag:
+            logger.debug(f'Deleting all jobs')
+            del self.jobs[:]
+        else:
+            logger.debug(f'Deleting all jobs in tagged {tag}')
+            self.jobs[:] = (job for job in self.jobs if tag not in job.tags)
+
+    def run_all(self, delay_seconds=0):
+        logger.debug(f'Running all {len(self.jobs)} jobs with {delay_seconds} delay in between')
+        for job in self.jobs[:]:
+            sleep(delay_seconds)
+            self._run_job(job)
+
+    def cancel_job(self,job):
+        try:
+            logger.debug(f'Canceling job {str(job)}')
+            self.jobs.remove(job)
+        except ValueError:
+            logger.debug(f'Canceling not scheduled list job {str(job)}')
 
 
 class Job:
@@ -185,3 +207,22 @@ def get_next_run(tag=None):
 
 def idle_seconds():
     return default_scheduler.idle_seconds
+
+
+def repeat(job, *arg, **kwargs):
+    def _scheduler_decorator(decorator_function):
+        job.do(decorator_function, *arg, **kwargs)
+        return decorator_function
+    return _scheduler_decorator
+
+
+def clear(tag=None):
+    default_scheduler.clear(tag)
+
+
+def run_all(delay_seconds=None):
+    default_scheduler.run_all(delay_seconds=delay_seconds)
+
+
+def cancel_job(job):
+    default_scheduler.cancel_job(job)
