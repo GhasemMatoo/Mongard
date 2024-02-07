@@ -1,6 +1,6 @@
 import logging
 from functools import partial, update_wrapper
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, time
 from time import sleep
 from collections.abc import Hashable
 
@@ -19,6 +19,12 @@ class IntervalError(SchedulerError):
     """An improper interval was used"""
 
 
+class CancelJob:
+    """
+    Cancel job; can be returned from a job to unschedule itself.
+    """
+
+
 class Scheduler:
     def __init__(self):
         self.jobs = []
@@ -32,9 +38,8 @@ class Scheduler:
         for job in sorted(runnable_jobs):
             self._run_job(job)
 
-    @staticmethod
-    def _run_job(job):
-        job.run()
+    def _run_job(self, job):
+        result = job.run()
 
     def get_jobs(self, tag=None):
         if tag is None:
@@ -71,7 +76,7 @@ class Scheduler:
             sleep(delay_seconds)
             self._run_job(job)
 
-    def cancel_job(self,job):
+    def cancel_job(self, job):
         try:
             logger.debug(f'Canceling job {str(job)}')
             self.jobs.remove(job)
@@ -88,6 +93,7 @@ class Job:
         self.period = None
         self.last_run = None
         self.next_run = None
+        self.cancel_after = None
         self.tags = set()
         self.scheduler = scheduler
         self._unit_tuple = ('seconds', 'minutes', 'hours', 'days', 'weeks')
@@ -150,6 +156,51 @@ class Job:
         self.unit = 'weeks'
         return self
 
+    @staticmethod
+    def _decode_datetime_str(datetime_str, formats_str):
+        for format_time in formats_str:
+            try:
+                return datetime.strptime(datetime_str, format_time)
+            except ValueError:
+                pass
+        return None
+
+    def until(self, until_time):
+        if isinstance(until_time, datetime):
+            self.cancel_after = until_time
+        elif isinstance(until_time, timedelta):
+            self.cancel_after = datetime.now() + until_time
+        elif isinstance(until_time, time):
+            self.cancel_after = datetime.combine(datetime.now(), until_time)
+        elif isinstance(until_time, str):
+            cancel_after = self._decode_datetime_str(
+                until_time,
+                [
+                    '%Y-%m-%d %H:%M:%S',
+                    '%Y-%m-%d %H:%M',
+                    '%H:%M:%S',
+                    '%H:%M'
+                ]
+            )
+            if cancel_after is None:
+                raise SchedulerValueError("Invalid string format for until(import time)")
+            if '-' not in until_time:
+                date_time_now = datetime.now()
+                cancel_after = cancel_after.replace(
+                    year=date_time_now.year, month=date_time_now.month, day=date_time_now.day
+                )
+            self.cancel_after = cancel_after
+        else:
+            raise TypeError(
+                'until() takes a string, datetime.datetime, datatime.timedelta,'
+                'datetime.time parameter valid'
+            )
+        if self.cancel_after < datetime.now():
+            raise SchedulerValueError(
+                'Cannot scheduler a job to run until a time in the past'
+            )
+        return self
+
     def tag(self, *tags):
         if not all(isinstance(tag, Hashable)for tag in tags):
             raise TypeError("Tags must be hashable")
@@ -169,11 +220,22 @@ class Job:
         assert self.next_run is not None, 'must run _scheduler_next_run before'
         return self.next_run <= datetime.now()
 
+    def _is_overdue(self, time_new):
+        return self.cancel_after is not None and self.cancel_after > time_new
+
     def run(self):
+        if self._is_overdue(datetime.now()):
+            logger.debug(f'Cancelling job {self}')
+            return CancelJob
+
         logger.debug(f'Running job {self}')
         ret = self.job_func()
         self.last_run = datetime.now()
         self._scheduler_next_run()
+        if self._is_overdue(self.next_run):
+            logger.debug(f'Cancelling job {self}')
+            return CancelJob
+
         return ret
 
     def _scheduler_next_run(self):
