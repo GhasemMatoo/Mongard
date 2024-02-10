@@ -1,4 +1,5 @@
 import logging
+import re
 from functools import partial, update_wrapper
 from datetime import timedelta, datetime, time
 from time import sleep
@@ -40,6 +41,8 @@ class Scheduler:
 
     def _run_job(self, job):
         result = job.run()
+        if isinstance(result, CancelJob) or result is CancelJob:
+            self.cancel_job(job)
 
     def get_jobs(self, tag=None):
         if tag is None:
@@ -94,6 +97,10 @@ class Job:
         self.last_run = None
         self.next_run = None
         self.cancel_after = None
+        self.latest = None
+        self.start_day = None
+        self.at_time = None
+        self.at_time_zone = None
         self.tags = set()
         self.scheduler = scheduler
         self._unit_tuple = ('seconds', 'minutes', 'hours', 'days', 'weeks')
@@ -155,6 +162,80 @@ class Job:
     def weeks(self):
         self.unit = 'weeks'
         return self
+
+    @property
+    def monday(self):
+        if self.interval != 1:
+            raise IntervalError(
+                'Scheduling .monday() job is only allowed for weekly jobs.'
+                'Using .monday() on a job scheduled to tun every 2 or more weeks'
+                'is ont supported'
+            )
+        self.start_day = 'monday'
+        return self.weeks
+
+    def to(self, latest):
+        self.latest = latest
+        return self
+
+    def at(self, time_str, tz=None):
+        if self.unit not in ('days', 'hours', 'minutes') and not self.start_day:
+            raise SchedulerValueError(
+                "Invalid unit (valid units are `days`, `hours`, and `minutes`"
+            )
+
+        if tz is not None:
+            from pytz import timezone, BaseTzInfo
+
+            if isinstance(tz, str):
+                self.at_time_zone = timezone(tz)
+            elif isinstance(tz, BaseTzInfo):
+                self.at_time_zone = tz
+            else:
+                raise SchedulerValueError("Timezone must be sting or pytz.timezone object")
+
+        if not isinstance(time_str, str):
+            raise TypeError("at() should be passed a string ")
+
+        if self.unit == 'days' or self.start_day:
+            if not re.match(r'^[0-2]\d:[0-5]\d(:[0-5]\d)?$', time_str):
+                raise SchedulerValueError("Invalid time format for a daily job (valid format is HH:MM(:SS)?)")
+
+        if self.unit == 'hours':
+            if not re.match(r'^([0-5]\d)?:[0-5]\d$', time_str):
+                raise SchedulerValueError("Invalid time format for a hourly job (valid format is (MM)?:ss)")
+
+        if self.unit == 'minutes':
+            if not re.match(r'^:[0-5}\d$]', time_str):
+                raise SchedulerValueError("Invalid time format for a minutes job (valid format is :SS)")
+        time_values = time_str.split(':')
+
+        if len(time_values) == 3:
+            hour, minute, second = time_values
+        elif len(time_values) == 2 and self.unit == 'minutes':
+            hour, minute = 0, 0
+            _, second = time_values
+        elif len(time_values) == 2 and self.unit == 'hours' and len(time_values[0]):
+            hour = 0
+            minute, second = time_values
+        else:
+            hour, minute = time_values
+            second = 0
+
+        if self.unit == 'days' or self.start_day:
+            hour = int(hour)
+            if not (0 <= hour <= 23):
+                raise SchedulerValueError("Invalid number of hours ({} is not between 0 and 23)")
+        elif self.unit == 'hours':
+            hour = 0
+        elif self.unit == 'minutes':
+            hour, minute = 0, 0
+
+        hour = int(hour)
+        minute = int(minute)
+        second = int(second)
+        self.at_time = time(hour, minute, second)
+        return  self
 
     @staticmethod
     def _decode_datetime_str(datetime_str, formats_str):
@@ -221,7 +302,7 @@ class Job:
         return self.next_run <= datetime.now()
 
     def _is_overdue(self, time_new):
-        return self.cancel_after is not None and self.cancel_after > time_new
+        return self.cancel_after is not None and time_new > self.cancel_after
 
     def run(self):
         if self._is_overdue(datetime.now()):
