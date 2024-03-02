@@ -90,7 +90,7 @@ class Scheduler:
 
 class Job:
 
-    def __init__(self, interval, scheduler):
+    def __init__(self, interval, scheduler=None):
         self.interval = interval
         self.job_func = None
         self.unit = None
