@@ -4,9 +4,9 @@ credentials = pika.PlainCredentials(username="ghasem", password="Mg1368")
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='127.0.0.1', credentials=credentials))
 chanel_1 = connection.channel()
 
-chanel_1.queue_declare(queue="one")
+chanel_1.exchange_declare(exchange="test", exchange_type="fanout")
 
-properties = pika.BasicProperties(headers={"test": 'TEST'})
-chanel_1.basic_publish(exchange="", routing_key="one", body="Hello world...!", properties=properties)
+# properties = pika.BasicProperties(headers={"test": 'TEST'})
+chanel_1.basic_publish(exchange="test", routing_key='', body="Hello world to FANOUT!")
 print("Message sending")
-chanel_1.close()
+connection.close()
