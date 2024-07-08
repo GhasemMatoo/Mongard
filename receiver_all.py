@@ -1,14 +1,18 @@
 import pika
-
+from pika.exchange_type import ExchangeType
 credentials = pika.PlainCredentials(username="ghasem", password="Mg1368")
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='127.0.0.1', credentials=credentials))
 
 chanel_1 = connection.channel()
-chanel_1.exchange_declare(exchange="test", exchange_type="topic")
-queue = chanel_1.queue_declare(queue='', exclusive=True)
-queue_name = queue.method.queue
-chanel_1.queue_bind(exchange="test", queue=queue_name, routing_key='*.*.notimportant')
+chanel_1.exchange_declare(exchange="test", exchange_type=ExchangeType.headers)
+queue = chanel_1.queue_declare(queue='HQ-all', exclusive=True)
 
+bind_args = {
+    "x-match": "all", "name": "ghasem", "test": "ok"
+}
+
+queue_name = queue.method.queue
+chanel_1.queue_bind(exchange="test", queue=queue_name, arguments=bind_args)
 
 def callback(ch, method, properties, body):
     print(f'booody{body}')
