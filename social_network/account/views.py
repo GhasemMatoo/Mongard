@@ -65,8 +65,8 @@ class UserLoginView(View):
 
 
 class UserLogoutView(View):
-
-    def get(self, request):
+    @staticmethod
+    def get(request):
         logout(request=request)
         messages.success(request=request, message='you logout successfully', extra_tags='success')
         return redirect('home:home')
