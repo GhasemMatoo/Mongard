@@ -6,12 +6,19 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import views as auth_views
+
+
 # Create your views here.
 
 
 class RegisterView(View):
     template_name = 'account/register.html'
     form_class = UserRegistrationForm
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('home:home')
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, request):
         return render(request=request, template_name=self.template_name, context={"form": self.form_class})
@@ -34,6 +41,11 @@ class UserLoginView(View):
     template_name = 'account/login.html'
     form_class = UserLoginForm
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('home:home')
+        return super().dispatch(request, *args, **kwargs)
+
     def get(self, request):
         return render(request=request, template_name=self.template_name, context={"form": self.form_class})
 
@@ -53,8 +65,17 @@ class UserLoginView(View):
 
 
 class UserLogoutView(View):
-    @staticmethod
-    def get(request):
+
+    def get(self, request):
         logout(request=request)
         messages.success(request=request, message='you logout successfully', extra_tags='success')
         return redirect('home:home')
+
+
+class UserProfileView(LoginRequiredMixin, View):
+    template_name = 'account/profile.html'
+
+    def get(self, request, *args, **kwargs):
+        user_id = kwargs.get("user_id")
+        user = User.objects.get(pk=user_id)
+        return render(request=request, template_name=self.template_name, context={"user": user})
