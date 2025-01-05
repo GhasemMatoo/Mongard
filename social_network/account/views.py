@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import views as auth_views
+from home.models import Post
 
 
 # Create your views here.
@@ -78,4 +79,5 @@ class UserProfileView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         user_id = kwargs.get("user_id")
         user = User.objects.get(pk=user_id)
-        return render(request=request, template_name=self.template_name, context={"user": user})
+        posts = user.post_set.all()
+        return render(request=request, template_name=self.template_name, context={"user": user, "posts": posts})
