@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.text import slugify
@@ -25,14 +25,14 @@ class PostDetailView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         post_id = kwargs.get("post_id")
         post_slug = kwargs.get("post_slug")
-        post = Post.objects.get(pk=post_id, slug=post_slug)
+        post = get_object_or_404(Post, pk=post_id, slug=post_slug)
         return render(request, template_name=self.template_name, context={"posts": post})
 
 
 class PostDeleteView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         post_id = kwargs.get("post_id")
-        post = Post.objects.get(pk=post_id)
+        post = get_object_or_404(Post, pk=post_id)
         if post.user_id != request.user.id:
             messages.error(request=request, message="you cant delete this post", extra_tags="danger")
         post.delete()
@@ -48,7 +48,7 @@ class PostUpdateView(LoginRequiredMixin, View):
 
     @staticmethod
     def get_post(post_id):
-        post = Post.objects.get(pk=post_id)
+        post = get_object_or_404(Post, pk=post_id)
         return post
 
     def setup(self, request, *args, **kwargs):

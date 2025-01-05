@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .forms import UserRegistrationForm, UserLoginForm
 from django.contrib.auth.models import User
@@ -6,7 +6,6 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import views as auth_views
-from home.models import Post
 
 
 # Create your views here.
@@ -78,6 +77,6 @@ class UserProfileView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         user_id = kwargs.get("user_id")
-        user = User.objects.get(pk=user_id)
+        user = get_object_or_404(User, pk=user_id)
         posts = user.post_set.all()
         return render(request=request, template_name=self.template_name, context={"user": user, "posts": posts})
