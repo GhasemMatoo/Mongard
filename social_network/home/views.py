@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.text import slugify
 from django.contrib import messages
 from .models import Post
+from .forms import PostUpdateForm
 # Create your views here.
 
 
@@ -36,3 +38,39 @@ class PostDeleteView(LoginRequiredMixin, View):
         post.delete()
         messages.success(request=request, message="post delete successfully", extra_tags="success")
         return redirect('home:home')
+
+
+class PostUpdateView(LoginRequiredMixin, View):
+    template_name = 'home/update.html'
+    form_class = PostUpdateForm
+    post_id = None
+    post_instance = None
+
+    @staticmethod
+    def get_post(post_id):
+        post = Post.objects.get(pk=post_id)
+        return post
+
+    def setup(self, request, *args, **kwargs):
+        self.post_id = kwargs.get("post_id")
+        self.post_instance = self.get_post(self.post_id)
+        return super().setup(request, *args, **kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.post_instance.user_id != request.user.id:
+            messages.error(request=request, message=" you cant update is post", extra_tags='danger')
+            return redirect('home:home')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return render(request=request, template_name=self.template_name,
+                      context={'form': self.form_class(instance=self.get_post(self.post_id))})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, instance=self.post_instance)
+        if form.is_valid():
+            update_post = form.save(commit=False)
+            update_post.slug = slugify(form.cleaned_data['body'][:30])
+            update_post.save()
+            messages.success(request=request, message="you updated this post", extra_tags="success")
+            return redirect('home:post_detail', self.post_id, self.post_instance.slug)
