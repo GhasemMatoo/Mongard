@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
-from .forms import UserRegistrationForm, UserLoginForm
+from .forms import UserRegistrationForm, UserLoginForm, EditUserForm
 from .models import Relation
 
 
@@ -139,3 +139,21 @@ class UserUnFollowView(LoginRequiredMixin, View):
         else:
             messages.error(request=request, message='you are not following this user', extra_tags='danger')
         return redirect('account:user_profile', user.id)
+
+
+class EditUserView(LoginRequiredMixin, View):
+    template_name = 'account/edit_profile.html'
+    form_class = EditUserForm
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(instance=request.user.profile, initial={"email": request.user.email})
+        return render(request=request, template_name=self.template_name, context={'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            request.user.email = form.cleaned_data['email']
+            request.user.save()
+            messages.success(request=request, message='profile edited successfully', extra_tags='success')
+        return redirect('account:user_profile', request.user.id)
