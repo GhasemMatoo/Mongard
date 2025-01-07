@@ -7,5 +7,31 @@
         <a href="{% url 'home:post_update' posts.id %}" class="btn btn-info">Update</a>
     {% endif %}
     <p> <a href="{% url 'account:user_profile' posts.user.id %}">{{ posts.user.username }}</a> - {{ posts.updated|date:"Y-M" }}</p>
-    <p> {{ posts.body}} </p>
+    <p> {{ posts.body}} </p><hr/>
+    {% if request.user.is_authenticated %}
+        <a href="{% url 'home:post_like' post.id %}" class="btn btn-primary col-md-2">Like {{ post.likes_count }}</a>
+        <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Send Comment">
+        </form><br/>
+    {% endif %}
+    {% for comment in comments %}
+        <div class="card bg-dark text-white">
+            <p class="card-header">{{ comment.user }} | {{ comment.created| timesince }}</p>
+            <p class="cord-body">{{ comment.body }}</p>
+        {% if request.user.is_authenticated  %}
+            <form action="{% url 'home:post_reply' post.id comment.id %}" method="post">
+            {% csrf_token %}
+            {{ reply_form.as_p }}
+            <input type="submit" value="send reply comment">
+            </form>
+        {% endif %}
+        {% for reply in comment.recomments.all %}
+            <p class="bg-primary p-3 m-2">{{ reply.user }}<br/> {{ reply.body }}</p>
+        {% endfor %}
+        </div><br/>
+    {% empty %}
+        <p>No comments yet!</p>
+    {% endfor %}
 {% endblock %}
