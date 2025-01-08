@@ -1,0 +1,98 @@
+
+  ============================================================================  
+
+    sniarbtej YYDS 2024.2.7
+
+  ============================================================================  
+
+
+[*] premain args: jetbrains
+
+[*] License ID: SNIARBTEJ
+[*] User Name: ghmatoo
+[*] Expire Date: 2048-10-24
+[*] Force Generate: false
+  ============================================================================  
+
+platformPrefix: python
+configPath: /home/ghmatoo/.config/JetBrains/PyCharm2023.3
+platformPrefix: python
+configPath: /home/ghmatoo/.config/JetBrains/PyCharm2023.3
+pluginsPath: /home/ghmatoo/.local/share/JetBrains/PyCharm2023.3
+2025-01-04 15:12:24,505 [    361]   WARN - #c.i.s.ComponentManagerImpl - `preload=true` must be used only for core services (service=com.jetbrains.rdserver.statistics.BackendStatisticsManager, plugin=com.jetbrains.codeWithMe)
+2025-01-04 15:12:24,558 [    414]   WARN - #c.i.o.v.n.p.d.e.DurableEnumeratorFactory - [contentHashes.dat]: .valueToId map is out-of-sync with .valuesLog data -> rebuilding it
+2025-01-04 15:12:24,631 [    487]   WARN - #c.i.o.v.n.p.PersistentFSLoader - [VFS load problem]: VFS wasn't safely shut down: records.connectionStatus != SAFELY_CLOSED
+2025-01-04 15:12:24,637 [    493]   WARN - #c.i.o.v.n.p.PersistentFSLoader - [VFS load problem]: Content storage is not match content hash enumerator: contents.records(=2616) != contentHashes.recordsCount(=2619)
+2025-01-04 15:12:25,437 [   1293]   WARN - #c.i.w.i.i.l.m.ModuleBridgeLoaderService - Loaded from cache, but no serialized modules found. Workspace model cache will be ignored, project structure will be recreated.
+2025-01-04 15:12:25,570 [   1426]   WARN - #c.i.o.v.n.p.r.NotClosedProperlyRecoverer - file[#123668]: contentId(=2617) content fails to resolve. null
+2025-01-04 15:12:25,601 [   1457]   WARN - #c.i.o.v.n.p.r.NotClosedProperlyRecoverer - file[#148563]: contentId(=2618) content fails to resolve. null
+2025-01-04 15:12:25,648 [   1504]   WARN - #c.i.o.v.n.p.r.NotClosedProperlyRecoverer - file[#173915]: contentId(=2619) content fails to resolve. null
+2025-01-04 15:12:25,985 [   1841]   WARN - #c.i.o.v.n.p.r.ContentStoragesRecoverer - ContentStorage check is failed: file[#123668].content[contentId: 2617] is broken, java.io.EOFException
+2025-01-04 15:12:26,016 [   1872]   WARN - #c.i.o.v.n.p.r.ContentStoragesRecoverer - ContentStorage is found broken -> fixed by invalidating all the content refs (LocalHistory is lost)
+2025-01-04 15:12:26,040 [   1896]   WARN - #c.i.s.ComponentManagerImpl - com.intellij.psi.search.FilenameIndex initializer requests com.intellij.ide.plugins.PluginUtil instance
+2025-01-04 15:12:26,107 [   1963]   WARN - #c.i.e.t.TargetBasedSdks - SDK target configuration data is absent
+2025-01-04 15:12:26,116 [   1972]   WARN - #c.i.e.t.TargetBasedSdks - SDK target configuration data is absent
+2025-01-04 15:12:26,121 [   1977]   WARN - #c.i.e.t.TargetBasedSdks - SDK target configuration data is absent
+2025-01-04 15:12:26,125 [   1981]   WARN - #c.i.e.t.TargetBasedSdks - SDK target configuration data is absent
+2025-01-04 15:12:26,129 [   1985]   WARN - #c.i.e.t.TargetBasedSdks - SDK target configuration data is absent
+2025-01-04 15:12:26,134 [   1990]   WARN - #c.i.e.t.TargetBasedSdks - SDK target configuration data is absent
+2025-01-04 15:12:26,260 [   2116]   WARN - #c.i.s.ComponentManagerImpl - com.intellij.lang.javascript.psi.jsdoc.impl.JSDocCustomTags initializer requests com.intellij.lang.javascript.JSDisposable instance
+2025-01-04 15:12:26,485 [   2341]   WARN - #c.i.s.ComponentManagerImpl - org.zmlx.hg4idea.provider.HgChangeProvider initializer requests com.intellij.openapi.vcs.FileStatusFactory instance
+2025-01-04 15:12:26,488 [   2344]   WARN - #c.i.s.ComponentManagerImpl - com.intellij.psi.LanguageSubstitutors initializer requests com.intellij.psi.LanguageSubstitutors instance
+2025-01-04 15:12:26,787 [   2643]   WARN - #c.i.s.ComponentManagerImpl - com.jetbrains.python.PyElementTypes initializer requests com.jetbrains.python.PyElementTypesFacade instance
+2025-01-04 15:12:27,648 [   3504]   WARN - #c.i.o.a.i.ActionUpdater - 728 ms to grab EDT for JoinCallAction#Update@MainToolbar (com.jetbrains.rd.platform.codeWithMe.telephony.JoinCallAction)
+2025-01-04 15:12:27,814 [   3670]   WARN - #c.i.o.a.i.ActionUpdater - 340 ms to grab EDT for ToolWindowHeader$2#Update@ToolwindowTitle (com.intellij.toolWindow.ToolWindowHeader$2)
+2025-01-04 15:12:27,877 [   3733]   WARN - #c.i.o.v.n.p.d.e.DurableEnumeratorFactory - [enumerator.mmapped]: .valueToId map is out-of-sync with .valuesLog data -> rebuilding it
+2025-01-04 15:12:28,000 [   3856]   WARN - #o.j.p.t.TextMateService - Cannot find referenced file `./language-configuration.json` in bundle `/home/ghmatoo/Documents/pycharm-2023.3.7/plugins/textmate/lib/bundles/mdx`
+2025-01-04 15:12:28,183 [   4039]   WARN - #c.i.o.a.i.ActionUpdater - 367 ms to grab EDT for ToolWindowHeader$2#GetChildren@ToolwindowTitle (com.intellij.toolWindow.ToolWindowHeader$2)
+2025-01-04 15:12:28,833 [   4689]   WARN - #c.i.i.s.p.i.BundledSharedIndexPostStartupActivity - Skipped 1 pre-built shared indexes: bundled-js-predefined-1d06a55b98c1-985749b364ce-JavaScript-PY-233.15619.17
+2025-01-04 15:12:28,898 [   4754]   WARN - #c.i.i.s.i.StartupManagerImpl - Migrate com.jetbrains.python.index.PyPackageManagerActivity to ProjectActivity [Plugin: com.jetbrains.python.sharedIndexes.downloadable]
+com.intellij.diagnostic.PluginException: Migrate com.jetbrains.python.index.PyPackageManagerActivity to ProjectActivity [Plugin: com.jetbrains.python.sharedIndexes.downloadable]
+	at com.intellij.ide.startup.impl.StartupManagerImpl.runPostStartupActivities(StartupManagerImpl.kt:277)
+	at com.intellij.ide.startup.impl.StartupManagerImpl.access$runPostStartupActivities(StartupManagerImpl.kt:69)
+	at com.intellij.ide.startup.impl.StartupManagerImpl$runPostStartupActivities$3$2.invokeSuspend(StartupManagerImpl.kt:192)
+	at com.intellij.ide.startup.impl.StartupManagerImpl$runPostStartupActivities$3$2.invoke(StartupManagerImpl.kt)
+	at com.intellij.ide.startup.impl.StartupManagerImpl$runPostStartupActivities$3$2.invoke(StartupManagerImpl.kt)
+	at kotlinx.coroutines.intrinsics.UndispatchedKt.startUndispatchedOrReturn(Undispatched.kt:78)
+	at kotlinx.coroutines.BuildersKt__Builders_commonKt.withContext(Builders.common.kt:167)
+	at kotlinx.coroutines.BuildersKt.withContext(Unknown Source)
+	at com.intellij.ide.startup.impl.StartupManagerImpl$runPostStartupActivities$3.invokeSuspend(StartupManagerImpl.kt:191)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.UndispatchedCoroutine.afterResume(CoroutineContext.kt:270)
+	at kotlinx.coroutines.AbstractCoroutine.resumeWith(AbstractCoroutine.kt:102)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:46)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:108)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:584)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:793)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:697)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:684)
+2025-01-04 15:12:29,162 [   5018]   WARN - #c.i.s.ComponentManagerImpl - com.intellij.database.console.session.DatabaseSessionManager initializer requests com.intellij.database.console.session.DatabaseSessionViewService instance
+2025-01-04 15:12:29,353 [   5209]   WARN - #c.i.o.a.i.ActionUpdater - 343 ms to grab EDT for DockToolWindowAction#Update@ToolwindowTitle (com.intellij.openapi.wm.impl.DockToolWindowAction)
+2025-01-04 15:12:29,354 [   5210]   WARN - #c.i.o.a.i.ActionUpdater - 342 ms to grab EDT for ExpandAllAction#Update@ToolwindowTitle (com.intellij.ide.actions.ExpandAllAction)
+2025-01-04 15:12:29,354 [   5210]   WARN - #c.i.o.a.i.ActionUpdater - 342 ms to grab EDT for CollapseAllAction#Update@ToolwindowTitle (com.intellij.ide.actions.CollapseAllAction)
+2025-01-04 15:12:48,126 [  23982]   WARN - #c.i.i.s.p.i.BundledSharedIndexPostStartupActivity - Skipped 1 pre-built shared indexes: bundled-js-predefined-1d06a55b98c1-985749b364ce-JavaScript-PY-233.15619.17
+2025-01-04 15:12:48,130 [  23986]   WARN - #c.i.i.s.i.StartupManagerImpl - Migrate com.jetbrains.python.index.PyPackageManagerActivity to ProjectActivity [Plugin: com.jetbrains.python.sharedIndexes.downloadable]
+com.intellij.diagnostic.PluginException: Migrate com.jetbrains.python.index.PyPackageManagerActivity to ProjectActivity [Plugin: com.jetbrains.python.sharedIndexes.downloadable]
+	at com.intellij.ide.startup.impl.StartupManagerImpl.runPostStartupActivities(StartupManagerImpl.kt:277)
+	at com.intellij.ide.startup.impl.StartupManagerImpl.access$runPostStartupActivities(StartupManagerImpl.kt:69)
+	at com.intellij.ide.startup.impl.StartupManagerImpl$runPostStartupActivities$3$2.invokeSuspend(StartupManagerImpl.kt:192)
+	at com.intellij.ide.startup.impl.StartupManagerImpl$runPostStartupActivities$3$2.invoke(StartupManagerImpl.kt)
+	at com.intellij.ide.startup.impl.StartupManagerImpl$runPostStartupActivities$3$2.invoke(StartupManagerImpl.kt)
+	at kotlinx.coroutines.intrinsics.UndispatchedKt.startUndispatchedOrReturn(Undispatched.kt:78)
+	at kotlinx.coroutines.BuildersKt__Builders_commonKt.withContext(Builders.common.kt:167)
+	at kotlinx.coroutines.BuildersKt.withContext(Unknown Source)
+	at com.intellij.ide.startup.impl.StartupManagerImpl$runPostStartupActivities$3.invokeSuspend(StartupManagerImpl.kt:191)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:108)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:584)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:793)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:697)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:684)
+2025-01-04 15:12:49,069 [  24925]   WARN - #c.i.o.u.DialogWrapper - IdeModalityType.PROJECT is not fully supported and may lead to unexpected problems. Use IdeModalityType.IDE for modal dialogs and IdeModalityType.MODELESS for non-modal ones
+2025-01-04 15:12:49,070 [  24926]   WARN - #c.i.o.u.DialogWrapper - IdeModalityType.PROJECT is not fully supported and may lead to unexpected problems. Use IdeModalityType.IDE for modal dialogs and IdeModalityType.MODELESS for non-modal ones
+2025-01-04 15:12:49,209 [  25065]   WARN - #c.j.p.s.f.PythonSdkFlavor - /home/ghmatoo/Desktop/djangoProject/.venv/bin/python is not executable: File /home/ghmatoo/Desktop/djangoProject/.venv/bin/python is not found
+2025-01-04 15:13:18,131 [  53987]   WARN - #c.i.o.v.i.l.FileWatcher - PyCharm cannot receive filesystem event notifications for the project. Is it on a network drive?
+2025-01-04 15:13:24,494 [  60350]   WARN - #c.i.u.x.Binding - no accessors for com.intellij.ide.util.TipsUsageManager$State
+Opening in existing browser session.
+Opening in existing browser session.
+2025-01-04 15:13:59,986 [  95842]   WARN - #c.i.u.x.Binding - no accessors for com.intellij.openapi.projectRoots.Sdk
