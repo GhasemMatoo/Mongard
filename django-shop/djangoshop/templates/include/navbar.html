@@ -1,8 +1,12 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+ <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
     <div class="navbar-nav">
       <a class="nav-link active" href="{% url 'home:home' %}">Home</a>
       <a class="nav-link active" href="{% url 'accounts:register' %}">Register</a>
+        {% if request.user.is_admin %}
+            <a class="nav-link active" href="{% url 'home:bucket' %}">Bucket</a>
+            <a class="nav-link active" href="{% url 'home:bucketUpload' %}">BucketUpload</a>
+        {% endif %}
     </div>
   </div>
 </nav>

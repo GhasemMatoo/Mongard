@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import environ
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +27,7 @@ SECRET_KEY = 'django-insecure-!s83c#5iszvi&p5@n1^u5^pcs%qu3-e0d0o8evy^qufzfk%^zw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -38,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accounts.apps.AccountsConfig',
-    'home.apps.HomeConfig'
+    'home.apps.HomeConfig',
+    'storages'
 ]
 
 MIDDLEWARE = [
@@ -115,7 +118,7 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
+# https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
@@ -127,8 +130,33 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+# https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
+
+liara_env = environ.Env()
+liara_env.read_env(str(BASE_DIR / ".AWS_env"))
+# ARVAN CLOUD STORAGE
+AWS_ACCESS_KEY_ID = liara_env('LIARA_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = liara_env('LIARA_SECRET_KEY')
+AWS_STORAGE_BUCKET_NAME = liara_env('LIARA_BUCKET_NAME')
+AWS_S3_ENDPOINT_URL = liara_env('LIARA_ENDPOINT')
+AWS_S3_REGION_NAME = 'us-east-1'
+AWS_SERVICE_NAME = 's3'
+AWS_s3_FILE_OVERWRITE = False
+AWS_LOCAL_STORAGE = f'{BASE_DIR}/aws/'
+
+# Django-storages configuration
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
+
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:800', 'http://localhost:8000']
