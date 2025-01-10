@@ -2,10 +2,12 @@ import random
 
 from django.shortcuts import render, redirect
 from django.views import View
-from .forms import UserRegisterForm, VerifyCodeForm
+from django.contrib import messages
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import UserRegisterForm, VerifyCodeForm, UserLoginForm
 from utils import send_otp_code
 from .models import User, OtpCode
-from django.contrib import messages
 # Create your views here.
 
 
@@ -60,3 +62,28 @@ class UserRegisterVerifyCodeView(View):
         return render(request=request, template_name=self.template_name, context={'form': form})
 
 
+class UserLogoutView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        logout(request=request)
+        messages.success(request=request, message='you logout successfully', extra_tags='success')
+        return redirect('home:home')
+
+
+class UserLoginView(View):
+    template_name = "accounts/login.html"
+    form_class = UserLoginForm
+
+    def get(self, request, *args, **kwargs):
+        return render(request=request, template_name=self.template_name, context={"form": self.form_class})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            user = authenticate(request, phone_number=cd['phone'], password=cd['password'])
+            if user is not None:
+                login(request=request, user=user)
+                messages.success(request=request, message="you logged in successfully", extra_tags="info")
+                return redirect('home:home')
+            messages.success(request=request, message='phone or password is wrong', extra_tags='warning')
+            return render(request=request, template_name=self.template_name, context={"form": form})

@@ -5,6 +5,7 @@ from .models import Product
 from . import tasks
 from .forms import UploadFile
 from bucket import bucket
+from .mixins import IsAdminUserMixin
 # Create your views here.
 
 
@@ -25,7 +26,7 @@ class ProductDetailView(View):
         return render(request=request, template_name=self.template_name, context={'product': product})
 
 
-class BucketHomeView(View):
+class BucketHomeView(IsAdminUserMixin, View):
     template_name = 'home/bucket.html'
 
     def get(self, request, *args, **kwargs):
@@ -33,7 +34,7 @@ class BucketHomeView(View):
         return render(request=request, template_name=self.template_name, context={"objects": objects})
 
 
-class DeleteBucketObjectView(View):
+class DeleteBucketObjectView(IsAdminUserMixin, View):
     def get(self, request, *args, **kwargs):
         key = kwargs.get('key')
         tasks.delete_object_task(key=key)
@@ -41,7 +42,7 @@ class DeleteBucketObjectView(View):
         return redirect('home:bucket')
 
 
-class DownloadBucketObjectView(View):
+class DownloadBucketObjectView(IsAdminUserMixin, View):
     def get(self, request, *args, **kwargs):
         key = kwargs.get("key")
         tasks.download_object_task(key=key)
@@ -49,7 +50,7 @@ class DownloadBucketObjectView(View):
         return redirect('home:bucket')
 
 
-class UploadBuketObjectView(View):
+class UploadBuketObjectView(IsAdminUserMixin, View):
     template_name = 'home/upload.html'
     form_class = UploadFile
 
