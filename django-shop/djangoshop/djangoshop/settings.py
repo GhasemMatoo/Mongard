@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts.apps.AccountsConfig',
     'home.apps.HomeConfig',
-    'storages'
+    'storages',
+    'django_celery_beat'
 ]
 
 MIDDLEWARE = [
