@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.contrib import messages
-from .models import Product
+from .models import Product, Category
 from . import tasks
 from .forms import UploadFile
 from bucket import bucket
@@ -12,9 +12,14 @@ from .mixins import IsAdminUserMixin
 class HomeView(View):
     template_name = 'home/home.html'
 
-    def get(self, request):
-        products = Product.objects.all()
-        return render(request=request, template_name=self.template_name, context={"products": products})
+    def get(self, request, category_slug=None, *args, **kwargs):
+        products = Product.objects.filter(available=True)
+        categories = Category.objects.all()
+        if category_slug:
+            category = Category.objects.get(slug=category_slug)
+            products = products.filter(category=category)
+        context_data = {"products": products, 'categories': categories}
+        return render(request=request, template_name=self.template_name, context=context_data)
 
 
 class ProductDetailView(View):

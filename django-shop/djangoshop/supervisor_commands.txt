@@ -14,7 +14,7 @@
         user=user
         directory=/var/www/myproject/src/
         command=/var/www/myproject/bin/celery -A myproject worker -l info
-        numprocs=1
+        numprocs=18080
         autostart=true
         autorestart=true
         stdout_logfile=/var/log/myproject/celery.log
