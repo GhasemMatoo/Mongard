@@ -6,6 +6,7 @@ from . import tasks
 from .forms import UploadFile
 from bucket import bucket
 from .mixins import IsAdminUserMixin
+from orders.forms import CartAddForm
 # Create your views here.
 
 
@@ -24,11 +25,13 @@ class HomeView(View):
 
 class ProductDetailView(View):
     template_name = 'home/detail.html'
+    form_class = CartAddForm
 
     def get(self, request, *args, **kwargs):
         slug = self.kwargs['slug']
         product = get_object_or_404(Product, slug=slug)
-        return render(request=request, template_name=self.template_name, context={'product': product})
+        context_data = {'product': product, 'form': self.form_class}
+        return render(request=request, template_name=self.template_name, context=context_data)
 
 
 class BucketHomeView(IsAdminUserMixin, View):
