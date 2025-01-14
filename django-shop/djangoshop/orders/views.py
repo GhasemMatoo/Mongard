@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib import messages
 from django.views import View
 from home.models import Product
@@ -20,8 +21,9 @@ class CartView(View):
         return render(request=request, template_name=self.template_name, context={"cart": cart})
 
 
-class CartAddView(View):
+class CartAddView(PermissionRequiredMixin, View):
     form_class = CartAddForm
+    permission_required = 'orders.ad_order'
 
     def post(self, request, *args, **kwargs):
         product_id = kwargs.get("product_id")
