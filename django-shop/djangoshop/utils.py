@@ -4,7 +4,7 @@ import environ
 from django.conf import settings
 
 env = environ.Env()
-env.read_env(str(settings.BASE_DIR / ".env"))
+env.read_env(str(settings.BASE_DIR / ".sms_env"))
 
 
 def send_otp_code(phone_number, otp_code):
