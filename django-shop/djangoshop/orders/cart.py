@@ -22,6 +22,10 @@ class Cart:
             item['total_price'] = int(item['price']) * item['quantity']
             yield item
 
+    def __len__(self):
+        sum_obj = sum(item['quantity'] for item in self.cart.values())
+        return sum_obj
+
     def add(self, product, quantity=0):
         product_id = str(product.id)
         if product_id not in self.cart:
@@ -41,4 +45,6 @@ class Cart:
             del self.cart[product_id]
             self.save()
 
-        
+    def clear(self):
+        del self.session[CART_SESSION_KEY]
+        self.save()
