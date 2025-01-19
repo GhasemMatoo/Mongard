@@ -11,5 +11,5 @@ class HomeView(APIView):
 
     def get(self, request, *args, **kwargs):
         person = Person.objects.all()
-        data = self.serializer_class(person, many=True).data
+        data = self.serializer_class(instance=person, many=True).data
         return Response(data=data, status=status.HTTP_200_OK)
