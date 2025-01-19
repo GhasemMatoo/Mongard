@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from .models import Person
 from .serialaizers import PersonSerializer
 # Create your views here.
@@ -8,6 +9,7 @@ from .serialaizers import PersonSerializer
 
 class HomeView(APIView):
     serializer_class = PersonSerializer
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         person = Person.objects.all()
