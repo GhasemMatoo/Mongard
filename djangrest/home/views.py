@@ -23,6 +23,7 @@ class HomeView(APIView):
 class QuestionListView(APIView):
     serializer_class = QuestionSerializer
     permission_classes = [AllowAny]
+    throttle_scope = 'questions'
 
     def get(self, request, *args, **kwargs):
         questions = Question.objects.all()
