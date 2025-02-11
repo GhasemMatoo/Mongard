@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from .forms import UserRegistrationForm
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import Writer
+from .forms import UserRegistrationForm
 
 
 # Create your views here.
@@ -23,7 +25,7 @@ class About(View):
 
 
 class UserRegisterView(View):
-    template_name = 'account/register.html'
+    template_name = 'home/register.html'
     form_class = UserRegistrationForm
 
     def dispatch(self, request, *args, **kwargs):
@@ -32,7 +34,7 @@ class UserRegisterView(View):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request):
-        return render(request=request, template_name=self.template_name, context={"form": self.form_class})
+        return render(request=request, template_name=self.template_name, context={"form": self.form_class()})
 
     def post(self, request):
         form = self.form_class(request.POST)
@@ -46,3 +48,11 @@ class UserRegisterView(View):
             return redirect('home:home')
         messages.error(request=request, message="you Input data not valid", extra_tags="error")
         return render(request=request, template_name=self.template_name, context={"form": self.form_class})
+
+
+class WriterView(LoginRequiredMixin, View):
+    template_name = 'home/register.html'
+
+    def get(self, request):
+        writers = Writer.objects.all()
+        return render(request=request, template_name=self.template_name, context={"writers": writers})
