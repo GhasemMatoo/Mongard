@@ -14,6 +14,8 @@ class Home(View):
     template_name = 'home/home.html'
 
     def get(self, request):
+        if request.user.is_authenticated:
+            return redirect('home:writer')
         return render(request=request, template_name=self.template_name)
 
 
