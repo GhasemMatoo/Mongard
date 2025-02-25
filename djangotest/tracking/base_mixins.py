@@ -22,7 +22,7 @@ class BaseLoggingMixin:
         Runs anything that needs to occur prior to calling the method handler.
         """
         self.log = {
-            'request_at': now(),
+            'requested_at': now(),
         }
         if not getattr(self, 'decode_request_body', app_settings.DECODE_REQUEST_BODY):
             self.log['data'] = ''
@@ -46,7 +46,7 @@ class BaseLoggingMixin:
         response = super().finalize_response(request, response, *args, **kwargs)
         if self.should_log(request, response):
             user = self._get_user(request)
-            if request.streaming:
+            if request.stream:
                 rendered_content = None
             elif hasattr(response, 'rendered_content'):
                 rendered_content = response.rendered_content
@@ -55,7 +55,7 @@ class BaseLoggingMixin:
             self.log.update({
                 'remote_addr': self._get_ip_address(request),
                 'view': self._get_view_name(request),
-                'view_method': self._get_view_method(request),
+                'view_methode': self._get_view_method(request),
                 'path': self._get_path(request),
                 'host': request.get_host(),
                 'method': request.method,
@@ -113,7 +113,7 @@ class BaseLoggingMixin:
         return user
 
     def _get_response_ms(self):
-        response_timedelta = now() - self.log['request_at']
+        response_timedelta = now() - self.log['requested_at']
         response_ms = response_timedelta.total_seconds() * 1000
         return max(int(response_ms), 0)
 
