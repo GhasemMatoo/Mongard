@@ -1,0 +1,57 @@
+services:
+  postgres:
+    container_name: postgres_dedicated
+    image: postgres:15
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      PGDATA: /data/postgres
+    volumes:
+       - dedicated_postgres:/data/dedicated_postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - django_shop_network
+
+  web:
+    image: app_dev_image:latest
+    env_file:
+      - .sms_env
+      - .AWS_env
+      - .django
+    ports:
+      - '8000:8000'
+    depends_on:
+#      - postgres
+      - redis
+    networks:
+      - django_shop_network
+
+  redis:
+    image: redis:latest
+    ports:
+      - '6379:6379'
+    networks:
+      - django_shop_network
+
+
+  worker:
+    image: app_dev_image:latest
+    command: celery -A djangoshop.celery worker -B --loglevel=info
+    depends_on:
+      - web
+      - redis
+    networks:
+      - django_shop_network
+
+
+volumes:
+  static_volume:
+    driver: local
+  dedicated_postgres:
+
+networks:
+  django_shop_network:
+
+#sudo TAG_NAME="latest" docker-compose up
+#docker build --build-arg requirement_file=requirements.txt --no-cache -t django_shop_dev:1.1.1 -f Dockerfile .
