@@ -1,8 +1,11 @@
+import ast
+
 from rest_framework.test import APITestCase, APIRequestFactory
-from django.urls import reverse
 from tracking.models import APIRequestLog
 from django.test import override_settings
+from django.contrib.auth.models import User
 from .views import MockLoggingView
+from tracking.mixins import BaseLoggingMixin
 
 
 @override_settings(ROOT_URLCONF='tracking.tests.urls')
@@ -104,3 +107,61 @@ class TestLoggingMixin(APITestCase):
         self.client.get('/logging/')
         log = APIRequestLog.objects.first()
         self.assertEqual(log.status_code, 200)
+
+    def test_logging_explicit(self):
+        url = '/explicit-logging/'
+        self.client.get(url)
+        self.client.post(url)
+        self.assertEqual(APIRequestLog.objects.all().count(), 1)
+
+    def test_custom_check_logging(self):
+        url = "/custom-check-logging/"
+        self.client.get(url)
+        self.client.post(url)
+        self.assertEqual(APIRequestLog.objects.all().count(), 1)
+
+    def test_log_anon_user(self):
+        self.client.get('/logging/')
+        log = APIRequestLog.objects.first()
+        self.assertEqual(log.user, None)
+
+    def test_log_auth_user(self):
+        username = 'ghasem'
+        password = '1234'
+        User.objects.create_user(username=username, password=password)
+        user = User.objects.get(username=username)
+
+        self.client.login(username=username, password=password)
+        self.client.get('/session-auth-logging/')
+
+        log = APIRequestLog.objects.first()
+        self.assertEqual(log.user, user)
+
+    def test_log_params(self):
+        self.client.get('/logging/', {'p1': 'a', 'another': '2'})
+        log = APIRequestLog.objects.first()
+        self.assertEqual(ast.literal_eval(log.query_params), {'p1': 'a', 'another': '2'})
+
+    def test_log_params_cleaned_form_personal_list(self):
+        params = {'api': "123456", 'capitalized': "123456", 'my_field': "123456"}
+        self.client.get('/sensitive-fields-logging/', params)
+        log = APIRequestLog.objects.first()
+        self.assertEqual(
+            ast.literal_eval(log.query_params),
+            {
+                'api': BaseLoggingMixin.CLEANED_SUBSTITUTE,
+                'capitalized': "123456",
+                'my_field': BaseLoggingMixin.CLEANED_SUBSTITUTE
+            }
+        )
+
+    def test_invalid_cleaned_substitute_fails(self):
+        with self.assertRaises(AssertionError):
+            self.client.get('/invalid-cleaned-substitute-logging/')
+
+
+
+
+
+
+
