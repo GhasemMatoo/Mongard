@@ -1,9 +1,11 @@
 import ast
+import datetime
 
 from rest_framework.test import APITestCase, APIRequestFactory
 from tracking.models import APIRequestLog
 from django.test import override_settings
 from django.contrib.auth.models import User
+from unittest import mock
 from .views import MockLoggingView
 from tracking.mixins import BaseLoggingMixin
 
@@ -159,9 +161,19 @@ class TestLoggingMixin(APITestCase):
         with self.assertRaises(AssertionError):
             self.client.get('/invalid-cleaned-substitute-logging/')
 
+    @mock.patch('tracking.models.APIRequestLog.save')
+    def test_log_doesnt_prevent_api_call_if_log_save_fails(self, mocked_save):
+        mocked_save.side_effect = Exception('db failure')
+        response = self.client.get('/logging/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(APIRequestLog.objects.all().count(), 0)
 
-
-
-
-
-
+    @mock.patch('tracking.base_mixins.now')
+    def test_log_doesnt_fail_whit_negative_response_ms(self, mocked_now):
+        mocked_now.side_effect = [
+            datetime.datetime(2020, 12, 1, 0, 10),
+            datetime.datetime(2020, 12, 1, 0, 0)
+        ]
+        self.client.get('/logging/')
+        log = APIRequestLog.objects.first()
+        self.assertEqual(log.response_ms, 0)
