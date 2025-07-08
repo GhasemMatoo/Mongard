@@ -1,0 +1,27 @@
+import time
+import os
+from multiprocessing import Process, current_process
+
+start = time.perf_counter()
+
+def show(name):
+    print(f'Started {name}')
+    print(current_process())
+    print(f'OS pid ==> {os.getpid()}')
+    print(f'OS ppid ==> {os.getppid()}')
+    time.sleep(3)
+    print(f'Ending {name}')
+
+
+p1 = Process(target=show, args=("One",))
+p2 = Process(target=show, args=("Two",))
+
+p1.start()
+p2.start()
+
+p1.join()
+p2.join()
+
+end = time.perf_counter()
+
+print(round(end-start))
