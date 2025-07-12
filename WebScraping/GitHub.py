@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 
 url = 'https://github.com/{}'
-Username = "amirbigg" # input('Enter User name: ')
+Username = input('Enter User name: ')
 
 
 response = requests.get(url.format(Username), params={'tab': 'repositories'})
