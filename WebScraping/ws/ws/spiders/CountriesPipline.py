@@ -3,8 +3,8 @@ from scrapy.loader import ItemLoader
 from ..items import CountryItem
 
 
-class CountriesItemsLoadSpider(scrapy.Spider):
-    name = "CountriesItemsLoad"
+class CountriespiplineSpider(scrapy.Spider):
+    name = "CountriesPipline"
     allowed_domains = ["www.scrapethissite.com"]
     start_urls = ["https://www.scrapethissite.com/pages/simple/"]
 
