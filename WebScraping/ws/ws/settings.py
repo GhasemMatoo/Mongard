@@ -17,7 +17,7 @@ ADDONS = {}
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "ws (+http://www.yourdomain.com)"
-
+USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) Apple"
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
@@ -57,11 +57,11 @@ DOWNLOAD_DELAY = 1
 #}
 
 # Configure item pipelines
-ITEM_PIPELINES = {
-   "ws.pipelines.WsPipeline": 300,
-   "ws.pipelines.CountryPipeline": 300,
-   "ws.pipelines.PopulationPipeline": 100,
-}
+# ITEM_PIPELINES = {
+#    "ws.pipelines.WsPipeline": 300,
+#    "ws.pipelines.CountryPipeline": 300,
+#    "ws.pipelines.PopulationPipeline": 100,
+# }
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 
 # Enable and configure the AutoThrottle extension (disabled by default)
