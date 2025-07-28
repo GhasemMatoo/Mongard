@@ -27,3 +27,8 @@ class CountryItem(scrapy.Item):
         input_processor=MapCompose(remove_tags, to_strip, to_uppercase), output_processor=TakeFirst())
     capital = scrapy.Field(output_processor=TakeFirst())
     population = scrapy.Field(output_processor=TakeFirst())
+
+
+class FileItem(scrapy.Item):
+    file_url = scrapy.Field()
+    files = scrapy.Field()

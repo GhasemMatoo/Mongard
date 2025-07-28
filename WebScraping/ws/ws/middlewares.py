@@ -98,3 +98,14 @@ class WsDownloaderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info("Spider opened: %s" % spider.name)
+
+
+class ShowHeadersMiddleware:
+    def process_request(self, request, spider):
+        print('=' * 90)
+        print(f'Request headers: {request.headers}')
+
+    def process_response(self, request, response, spider):
+        print('=' * 90)
+        print(f'Request headers: {request.headers}')
+        return response
