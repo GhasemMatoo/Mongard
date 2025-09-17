@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Path, Query, HTTPException, status
-from typing import Optional, Union, Tuple
+from typing import Optional, Union
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -16,6 +16,24 @@ class Car(BaseModel):
     name: str
     model: str
     year_manufacture: int = Path(ge=2000, lt=2026)
+
+
+class User(BaseModel):
+    username: str
+    email: str
+    password: str
+
+
+class UserResponse(BaseModel):
+    username: str
+    email: str
+
+
+@app.post("/user", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+async def create_user(user: User) -> User:
+    if user.username == "admin":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username cant be admin")
+    return user
 
 
 @app.post("/car/")
