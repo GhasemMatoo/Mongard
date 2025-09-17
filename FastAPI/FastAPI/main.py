@@ -1,5 +1,5 @@
-from fastapi import FastAPI
-from typing import Optional, Union
+from fastapi import FastAPI, Path, Query, HTTPException, status
+from typing import Optional, Union, Tuple
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -10,6 +10,18 @@ class Person(BaseModel):
     age: int | None = 0  # optional by python 3.10
     height: Optional[int] = 0  # optional by python 3.6
     weight: Union[int, float] = None
+
+
+class Car(BaseModel):
+    name: str
+    model: str
+    year_manufacture: int = Path(ge=2000, lt=2026)
+
+
+@app.post("/car/")
+async def read_car(
+        car: Car, alias_name: str = Query(default="nothing", max_length=20, min_length=7)) -> tuple[Car, str]:
+    return car, alias_name
 
 
 @app.post("/person/")
