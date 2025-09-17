@@ -1,0 +1,17 @@
+# Test your FastAPI endpoints
+
+GET http://127.0.0.1:9000/
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:9000/hello/User
+Accept: application/json
+
+###
+GET http://127.0.0.1:9000/async
+Accept: application/json
+
+###
+GET http://127.0.0.1:9000/async/hello/User
+Accept: application/json
