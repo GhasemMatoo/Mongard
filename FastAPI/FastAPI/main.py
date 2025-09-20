@@ -1,11 +1,26 @@
-from fastapi import FastAPI, Path, Query, HTTPException, status, Request
+from fastapi import FastAPI, Path, Query, HTTPException, status, Request, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from typing import Optional, Union
 from pydantic import BaseModel
 
+import models
+from schemas import UserCreate, UserResponse
+from sqlalchemy.orm import Session
+from database import engine, SessionDatabase
+from models import User
+
+models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 templates = Jinja2Templates(directory='templates')
+
+
+def get_db():
+    db = SessionDatabase()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 class Person(BaseModel):
@@ -21,22 +36,24 @@ class Car(BaseModel):
     year_manufacture: int = Path(ge=2000, lt=2026)
 
 
-class User(BaseModel):
-    username: str
-    email: str
-    password: str
-
-
-class UserResponse(BaseModel):
-    username: str
-    email: str
-
-
 @app.post("/user", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def create_user(user: User) -> User:
-    if user.username == "admin":
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username cant be admin")
+async def create_user(user: UserCreate, db: Session = Depends(get_db)) -> UserCreate:
+    db_user = db.query(User).filter_by(email=user.email).first()
+    if db_user:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="email cant be use")
+    user = User(email=user.email, username=user.username, password=user.password)
+    db.add(user)
+    db.commit()
+    db.refresh(user)
     return user
+
+
+@app.get("/user/{user_id}", response_model=UserResponse, status_code=status.HTTP_200_OK)
+async def read_user(user_id: int, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter_by(id=user_id).first()
+    if db_user:
+        return db_user
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="use not found")
 
 
 @app.post("/car/")
